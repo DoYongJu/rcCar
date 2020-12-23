@@ -1,0 +1,19 @@
+import RPi.GPIO as GPIO
+import time
+DIGIT = 12
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(DIGIT, GPIO.IN)
+def LineSencer():
+   while True:
+       digit_val = GPIO.input(DIGIT)
+       if (digit_val == 0):
+           print("none")
+           time.sleep(0.5)
+       else:
+           print("exist")
+           time.sleep(0.5)
+   return LineSencerResult
+  
+LineSencer()
+GPIO.cleanup()
