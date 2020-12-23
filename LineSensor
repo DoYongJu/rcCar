@@ -1,0 +1,44 @@
+import RPi.GPIO as GPIO
+import time
+
+
+DIGIT_R = 23
+DIGIT_L = 25
+DIGIT_M = 22
+
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
+
+GPIO.setup(DIsGIT_R, GPIO.IN)
+GPIO.setup(DIGIT_L, GPIO.IN)
+GPIO.setup(DIGIT_M, GPIO.IN)
+
+def LineSencer():
+    while True: 
+        digit_val_R = GPIO.input(DIGIT_R)
+        digit_val_L = GPIO.input(DIGIT_L)
+        digit_val_M = GPIO.input(DIGIT_M)
+
+        if digit_val_L == 0 and digit_val_R == 0 and digit_val_M == 0: # 에러인 경우
+            print("none")
+            time.sleep(0.5)
+            return 0xEE
+
+        elif  digit_val_L == 0 and digit_val_R == 0 and digit_val_M == 1: # 정상운행 중
+            time.sleep(0.5)
+            return 0x31
+
+        elif digit_val_R != 0 : # 오른쪽 선만 밟은 경우
+            print("right line exist")
+            time.sleep(0.5)
+            return 0x21
+
+        else digit_val_L != 0 : # 왼쪽 선만 밟은 경우
+            print("left line exist")
+            time.sleep(0.5)
+            return 0x11
+        
+
+LineSencer()
+GPIO.cleanup()
+
