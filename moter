@@ -1,0 +1,90 @@
+import RPi.GPIO as gpio
+from board import SCL, SDA
+import board
+import busio
+import digitalio
+import time
+import sys
+from adafruit_pca9685 import PCA9685
+
+i2c_bus = busio.I2C(SCL, SDA)
+pca = PCA9685(i2c_bus)
+pca.frequency = 60
+
+m1_cw = digitalio.DigitalInOut(board.D5) - 앞
+m1_cw.direction = digitalio.Direction.OUTPUT
+m1_ccw = digitalio.DigitalInOut(board.D6) - 뒤
+m1_ccw.direction = digitalio.Direction.OUTPUT
+
+m2_cw = digitalio.DigitalInOut(board.D20) - 우
+m2_cw.direction = digitalio.Direction.OUTPUT
+m2_ccw = digitalio.DigitalInOut(board.D21) - 좌
+m2_ccw.direction = digitalio.Direction.OUTPUT
+
+def forward():
+    m1_cw.value = True
+    m1_ccw.value = False
+    pca.channels[0].duty_cycle = 0x4000
+    time.sleep(2)
+   
+def reverse():
+    m1_cw.value = False
+    m1_ccw.value = True
+    pca.channels[0].duty_cycle = 0x4000
+    time.sleep(2)
+
+def turn_left():
+    m2_cw.value = False
+    m2_ccw.value = True
+    pca.channels[1].duty_cycle = 0xDFFF
+    m1_cw.value = True
+    m1_ccw.value = False
+    pca.channels[0].duty_cycle = 0x4000
+    time.sleep(2)
+
+    m1_cw.value = True
+    m1_ccw.value = False
+    pca.channels[0].duty_cycle = 0x4000
+    time.sleep(2)
+
+    m2_cw.value = True
+    m2_ccw.value = False
+    pca.channels[1].duty_cycle = 0xDFFF
+    m1_cw.value = True
+    m1_ccw.value = False
+    pca.channels[0].duty_cycle = 0x4000
+    time.sleep(2)
+
+def turn_right():
+    m2_cw.value = True
+    m2_ccw.value = False
+    pca.channels[1].duty_cycle = 0xDFFF
+    m1_cw.value = True
+    m1_ccw.value = False
+    pca.channels[0].duty_cycle = 0x4000
+    time.sleep(2)
+
+    m1_cw.value = True
+    m1_ccw.value = False
+    pca.channels[0].duty_cycle = 0x4000
+    time.sleep(2)
+
+    m2_cw.value = False
+    m2_ccw.value = True
+    pca.channels[1].duty_cycle = 0xDFFF
+    m1_cw.value = True
+    m1_ccw.value = False
+    pca.channels[0].duty_cycle = 0x4000
+    time.sleep(2)
+
+def stop():
+    pca.channels[1].duty_cycle = 0x3000
+    time.sleep(1)
+    pca.channels[1].duty_cycle = 0x2000
+    time.sleep(1)
+    pca.channels[1].duty_cycle = 0x1000
+    time.sleep(1)
+    m1_cw.value = False
+    m1_ccw.value = False
+    pca.channels[1].duty_cycle = 0x0000
+    time.sleep(3)
